@@ -1,42 +1,43 @@
 <template>
   <TheNavbar />
+  <div class="home-page">
+    <div class="hero" v-if="heroMovie" :style="heroBgStyle">
+      <div class="hero-overlay"></div>
 
-  <!-- 히어로 영역 -->
-  <div class="hero" v-if="heroMovie" :style="heroBgStyle">
-    <!-- 좌측 버튼 -->
-    <button class="hero-btn left" @click="prevSlide">❮</button>
+      <div class="hero-content">
+        <h1 class="hero-title">{{ heroMovie.title }}</h1>
 
-    <div class="hero-content">
-      <h1>{{ heroMovie.title }}</h1>
-      <p>{{ heroMovie.overview }}</p>
-      <button class="detail-btn" @click="goDetail(heroMovie.id)">
-        자세히 보기
-      </button>
-    </div>
+        <button class="detail-btn" @click="goDetail(heroMovie.id)">
+          자세히 보기
+        </button>
+      </div>
 
-    <!-- 우측 버튼 -->
-    <button class="hero-btn right" @click="nextSlide">❯</button>
+      <!-- 좌/우 슬라이드 버튼 -->
+      <button class="slide-btn left" @click="prevSlide">‹</button>
+      <button class="slide-btn right" @click="nextSlide">›</button>
   </div>
 
-  <div v-else class="hero hero-empty">
-    <div class="hero-content">
-      <h1>영화가 아직 없습니다</h1>
-      <p>Django admin에서 Movie를 추가해보세요.</p>
+
+    <div v-else class="hero hero-empty">
+      <div class="hero-content">
+        <h1>영화가 아직 없습니다</h1>
+        <p>Django admin에서 Movie를 추가해보세요.</p>
+      </div>
     </div>
+                    
+    <!-- 영화 Row 섹션 -->
+    <MovieRow
+      v-if="popularMovies.length > 0"
+      title="지금 인기 영화"
+      :movies="popularMovies"
+    />
+
+    <MovieRow
+      v-if="recommendMovies.length > 0"
+      title="내 취향 추천"
+      :movies="recommendMovies"
+    />
   </div>
-
-  <!-- 영화 Row 섹션 -->
-  <MovieRow
-    v-if="popularMovies.length > 0"
-    title="지금 인기 영화"
-    :movies="popularMovies"
-  />
-
-  <MovieRow
-    v-if="recommendMovies.length > 0"
-    title="내 취향 추천"
-    :movies="recommendMovies"
-  />
 </template>
 
 <script setup>
@@ -121,51 +122,71 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.home-page {
+  padding: 60px;
+}
 .hero {
   position: relative;
   height: 70vh;
-  background-size: cover;
+  background-size: contain;   /* 🔥 이미지 전체 보이게 */
+  background-repeat: no-repeat;
   background-position: center;
+  background-color: #000;     /* 포스터 비율 남는 부분 검정 */
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  padding: 40px 60px;
+  color: white;
+}
+
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
 }
 
 .hero-content {
-  margin-left: 60px;
-  max-width: 500px;
-  z-index: 2;
-}
-
-.hero-btn {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.4);
-  border: none;
-  color: white;
+  bottom: 40px;
+  left: 60px;
+  z-index: 10;
+}
+
+.hero-title {
   font-size: 40px;
-  padding: 10px 18px;
-  cursor: pointer;
-  border-radius: 6px;
-  z-index: 3;
-}
-
-.hero-btn.left {
-  left: 20px;
-}
-
-.hero-btn.right {
-  right: 20px;
-}
-
-.hero-btn:hover {
-  background: rgba(0, 0, 0, 0.7);
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
 .detail-btn {
   background: #e50914;
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 12px 22px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 48px;
+  color: white;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  z-index: 20;
   border-radius: 5px;
 }
+
+.slide-btn.left { left: 20px; }
+.slide-btn.right { right: 20px; }
+
+.slide-btn:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+
 </style>
